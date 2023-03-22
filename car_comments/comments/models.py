@@ -29,6 +29,7 @@ class Comment(models.Model):
     email = models.EmailField(verbose_name='email', null=False)
     car = models.ForeignKey('Car', verbose_name='Машина', null=False, on_delete=models.CASCADE)
     comment_text = models.TextField(verbose_name='Комментарий', max_length=1024, null=False)
+    create_date = models.DateField(verbose_name='Дата создания', auto_now_add=True)
 
     def __str__(self) -> str:
         return f'{self.email} - {self.car}'
