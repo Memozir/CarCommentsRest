@@ -1,16 +1,17 @@
 from django.urls import path
 from django.conf.urls.static import static
-import car_comments.settings
 
+import car_comments.settings
+from . import views
 
 # Добавить для каждой модели эндпоинт с возможностью забрать все записи
 # Пример: 'get/country'
 # Использовать ViewSets
 urlpatterns = [
-    # path('get/country/', name='get_country'),
+    path('get/country', name='get_country', view=views.CountryAPIView.as_view()),
     # path('get/country/xlx', name='get_country_xlx'),
     # path('get/country/csv', name='get_country_csv'),
-    # path('create/country', name='create_country'),
+    path('create/country', views.CountryAPIView.as_view()),
     # path('update/country', name='update_country'),
     # path('delete/country', name='delete_country'),
 
