@@ -8,12 +8,12 @@ from . import views
 # Пример: 'get/country'
 # Использовать ViewSets
 urlpatterns = [
-    path('get/country', name='get_country', view=views.CountryAPIView.as_view()),
+    path('get/country', name='get_country', view=views.CountryListAPIView.as_view()),
     # path('get/country/xlx', name='get_country_xlx'),
     # path('get/country/csv', name='get_country_csv'),
-    path('create/country', views.CountryAPIView.as_view()),
+    path('create/country', views.CountryCreateAPIView.as_view()),
     # path('update/country', name='update_country'),
-    # path('delete/country', name='delete_country'),
+    path('delete/country', name='delete_country', view=views.CountryDeleteAPIView.as_view()),
 
     # path('get/producer', name='get_producer'),
     # path('get/producer/xlx', name='get_producer_xlx'),
