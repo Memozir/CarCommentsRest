@@ -10,6 +10,13 @@ class CountrySerializator(serializers.ModelSerializer):
         fields = "__all__"
 
 
+# class CountryUpdateSerializator(serializers.ModelSerializer):
+
+#     class Meta:
+#         model = Country
+#         fields = "__all__"
+
+
 # class CountryCreateSerializator(serializers.ModelSerializer):
 
 #     class Meta:

@@ -1,19 +1,20 @@
 from django.urls import path
 from django.conf.urls.static import static
+from rest_framework.routers import SimpleRouter
 
 import car_comments.settings
 from . import views
 
-# Добавить для каждой модели эндпоинт с возможностью забрать все записи
-# Пример: 'get/country'
-# Использовать ViewSets
+router = SimpleRouter()
+router.register('country', viewset=views.CountryViewset)
+
 urlpatterns = [
-    path('get/country', name='get_country', view=views.CountryListAPIView.as_view()),
+    path('get/country', name='get_country', view=views.CountryViewset.as_view({'get': 'list'})),
     # path('get/country/xlx', name='get_country_xlx'),
     # path('get/country/csv', name='get_country_csv'),
-    path('create/country', views.CountryCreateAPIView.as_view()),
-    # path('update/country', name='update_country'),
-    path('delete/country', name='delete_country', view=views.CountryDeleteAPIView.as_view()),
+    path('create/country', name='create_country', view=views.CountryViewset.as_view({'post': 'create'})),
+    path('update/country', name='update_country', view=views.CountryViewset.as_view({'put': 'put'})),
+    path('delete/country/<str:name>', name='delete_country', view=views.CountryViewset.as_view({'delete': 'destroy'}))
 
     # path('get/producer', name='get_producer'),
     # path('get/producer/xlx', name='get_producer_xlx'),
