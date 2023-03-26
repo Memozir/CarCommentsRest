@@ -5,16 +5,19 @@ from rest_framework.routers import SimpleRouter
 import car_comments.settings
 from . import views
 
-router = SimpleRouter()
-router.register('country', viewset=views.CountryViewset)
+router_country = SimpleRouter()
+router_country.register(r'country', viewset=views.CountryViewset)
+
+router_producer = SimpleRouter()
+router_producer.register(r'producer', viewset=views.ProducerViewset)
 
 urlpatterns = [
-    path('get/country', name='get_country', view=views.CountryViewset.as_view({'get': 'list'})),
+    # path('get/country', name='get_country', view=views.CountryViewset.as_view({'get': 'list'})),
     # path('get/country/xlx', name='get_country_xlx'),
     # path('get/country/csv', name='get_country_csv'),
-    path('create/country', name='create_country', view=views.CountryViewset.as_view({'post': 'create'})),
-    path('update/country', name='update_country', view=views.CountryViewset.as_view({'put': 'put'})),
-    path('delete/country/<str:name>', name='delete_country', view=views.CountryViewset.as_view({'delete': 'destroy'}))
+    # path('create/country', name='create_country', view=views.CountryViewset.as_view({'post': 'create'})),
+    # path('update/country', name='update_country', view=views.CountryViewset.as_view({'put': 'put'})),
+    # path('country/', name='delete_country', view=views.CountryViewset.as_view({'delete': 'destroy'}))
 
     # path('get/producer', name='get_producer'),
     # path('get/producer/xlx', name='get_producer_xlx'),

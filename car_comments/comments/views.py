@@ -6,8 +6,8 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework import status
 from rest_framework import viewsets
 
-from .models import Country
-from .serializers import CountrySerializator
+from .models import Country, Producer
+from .serializers import CountrySerializator, ProducerSerializtor
 
 
 class CountryViewset(viewsets.ModelViewSet):
@@ -16,10 +16,10 @@ class CountryViewset(viewsets.ModelViewSet):
     serializer_class = CountrySerializator
     lookup_field = 'name'
 
-    def get_queryset_destroy(self):
-        query = Country.objects.get(name=self.request.data.get('name'))
+    # def get_queryset_destroy(self):
+    #     query = Country.objects.get(name=self.request.data.get('name'))
         
-        return query
+    #     return query
     
     def get_queryset_put(self):
         query = Country.objects.get(name=self.request.data.get('update_name', False))
@@ -31,9 +31,14 @@ class CountryViewset(viewsets.ModelViewSet):
     
     # def destroy(self, request, *args, **kwargs):
     #     country = self.get_queryset_destroy()
-    #     self.perform_destroy(country)    
+    #     serializator = CountrySerializator(country)
 
-    #     return Response(status=status.HTTP_200_OK)
+    #     if serializator.is_valid():
+    #         self.perform_destroy(country) 
+    #         serializator.save()  
+    #         return Response(status=status.HTTP_204_NO_CONTENT) 
+        
+    #     return Response(status=status.HTTP_400_BAD_REQUEST)
     
     def put(self, request):
         query = self.get_queryset_put()
@@ -44,7 +49,33 @@ class CountryViewset(viewsets.ModelViewSet):
 
             return Response(status=status.HTTP_200_OK)
         else:    
-            return Response(status=400)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProducerViewset(viewsets.ModelViewSet):
+
+    queryset = Producer.objects.all()
+    serializer_class = ProducerSerializtor
+    lookup_field = 'name'
+
+    def get_queryset_put(self):
+        query = Country.objects.get(name=self.request.data.get('update_name', False))
+
+        if query:
+            return query
+        
+        return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+    
+    def put(self, request):
+        query = self.get_queryset_put()
+        serializer = ProducerSerializtor(query)
+
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 # class CountryListAPIView(APIView):
