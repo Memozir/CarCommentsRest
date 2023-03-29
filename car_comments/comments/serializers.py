@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from rest_framework.response import Response
+from rest_framework import status
 
 from .models import (
     Country,
@@ -68,14 +70,17 @@ class ProducerCarSerializer(serializers.ModelSerializer):
         model = Producer
         fields = ('name',)
 
+    name = serializers.CharField(max_length=255, required=True)
 
-class CarSerializtor(serializers.ModelSerializer):
+
+class CarSerializator(serializers.ModelSerializer):
     class Meta:
         model = Car
-        fields = '__all__'
+        fields = ('name', 'producer', 'year_start', 'year_end')
         # fields = ('name', 'producer', 'year_start', 'year_end', 'comments')
 
     producer = ProducerCarSerializer()
+    name = serializers.CharField(max_length=128)
     # comments = serializers.SerializerMethodField('_get_comments')
 
     def _get_comments(self, car):
@@ -85,10 +90,10 @@ class CarSerializtor(serializers.ModelSerializer):
         name = validated_data.pop('name')
         year_start = validated_data.pop('year_start')
         year_end = validated_data.pop('year_end')
-
+        
         producer = Producer.objects.get(name=validated_data.pop('producer').pop('name'))
 
-        car = Car(
+        car = Car.objects.create(
             name=name,
             producer=producer,
             year_start=year_start,

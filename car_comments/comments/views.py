@@ -6,8 +6,16 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework import status
 from rest_framework import viewsets
 
-from .models import Country, Producer
-from .serializers import CountrySerializator, ProducerSerializtor
+from .models import (
+    Country,
+    Producer,
+    Car
+)
+from .serializers import (
+    CountrySerializator,
+    ProducerSerializtor,
+    CarSerializator
+)
 
 
 class CountryViewset(viewsets.ModelViewSet):
@@ -77,6 +85,13 @@ class ProducerViewset(viewsets.ModelViewSet):
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class CarViewset(viewsets.ModelViewSet):
+    serializer_class = CarSerializator
+    queryset = Car.objects.all()
+    lookup_field = 'name'
+    raise_exception = True
 
 
 # class CountryListAPIView(APIView):
