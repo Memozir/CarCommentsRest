@@ -42,20 +42,35 @@ class ProducerSerializtor(serializers.ModelSerializer):
 
     class Meta:
         model = Producer
-        fields = ('name', 'country')
+        fields = ('name', 'country', 'cars',)
 
     name = serializers.CharField(max_length=255, required=True)
     country = CountryProducerSerializator()
-    # country = serializers.SlugRelatedField(slug_field='name', read_only=True)
+    cars = serializers.SerializerMethodField('_get_cars')
+
+    def _get_cars(self, producer):
+        cars = Car.objects.filter(producer__name=producer).values()
+
+        return cars
 
     def create(self, validated_data):
-        country = Country.objects.get(name=validated_data.pop('country').pop('name'))
+
+        try:
+            country = Country.objects.get(name=validated_data.pop('country').pop('name'))
+        except Exception:
+            raise serializers.ValidationError({'error': 'country`s name does not exist'})
+        
         producer_name = validated_data.pop('name')
         producer = Producer.objects.create(name=producer_name, country=country)
 
         return producer
     
     def update(self, instance, validated_data):
+
+        try:
+            country = Country.objects.get(name=validated_data.pop('country').pop('name'))
+        except Exception:
+            raise serializers.ValidationError({'error': 'country`s name does not exist'})        
 
         country = Country.objects.get(name=validated_data.pop('country').pop('name'))
         instance.name = validated_data.pop('name', False)
@@ -91,7 +106,10 @@ class CarSerializator(serializers.ModelSerializer):
         year_start = validated_data.pop('year_start')
         year_end = validated_data.pop('year_end')
         
-        producer = Producer.objects.get(name=validated_data.pop('producer').pop('name'))
+        try:
+            producer = Producer.objects.get(name=validated_data.pop('producer').pop('name'))
+        except Exception:
+            raise serializers.ValidationError({'error': 'producer`s name does not exist'})
 
         car = Car.objects.create(
             name=name,
@@ -101,3 +119,6 @@ class CarSerializator(serializers.ModelSerializer):
         )
 
         return car
+    
+    def update(self, instance, validated_data):
+        pass
