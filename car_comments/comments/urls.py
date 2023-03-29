@@ -14,6 +14,9 @@ router_producer.register(r'producer', viewset=views.ProducerViewset)
 router_car = SimpleRouter()
 router_car.register(r'car', viewset=views.CarViewset)
 
+router_comment = SimpleRouter()
+router_comment.register(r'comment', viewset=views.CommentViewset)
+
 urlpatterns = [
     # path('get/country', name='get_country', view=views.CountryViewset.as_view({'get': 'list'})),
     # path('get/country/xlx', name='get_country_xlx'),

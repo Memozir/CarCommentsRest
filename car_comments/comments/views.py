@@ -9,12 +9,14 @@ from rest_framework import viewsets
 from .models import (
     Country,
     Producer,
-    Car
+    Car,
+    Comment
 )
 from .serializers import (
     CountrySerializator,
     ProducerSerializtor,
-    CarSerializator
+    CarSerializator,
+    CommentSerializator
 )
 
 
@@ -93,6 +95,11 @@ class CarViewset(viewsets.ModelViewSet):
     lookup_field = 'name'
     raise_exception = True
 
+
+class CommentViewset(viewsets.ModelViewSet):
+    serializer_class = CommentSerializator
+    queryset = Comment.objects.all()
+    raise_exception = True
 
 # class CountryListAPIView(APIView):
 

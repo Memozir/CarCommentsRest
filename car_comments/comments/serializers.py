@@ -5,7 +5,8 @@ from rest_framework import status
 from .models import (
     Country,
     Producer,
-    Car
+    Car,
+    Comment
 )
 
 
@@ -80,7 +81,7 @@ class ProducerSerializtor(serializers.ModelSerializer):
         return instance
     
 
-class ProducerCarSerializer(serializers.ModelSerializer):
+class CarDefaultSerializer(serializers.ModelSerializer):
     class Meta:
         model = Producer
         fields = ('name',)
@@ -92,14 +93,16 @@ class CarSerializator(serializers.ModelSerializer):
     class Meta:
         model = Car
         fields = ('name', 'producer', 'year_start', 'year_end')
-        # fields = ('name', 'producer', 'year_start', 'year_end', 'comments')
+        fields = ('name', 'producer', 'year_start', 'year_end', 'comments',)
 
-    producer = ProducerCarSerializer()
+    producer = CarDefaultSerializer()
     name = serializers.CharField(max_length=128)
-    # comments = serializers.SerializerMethodField('_get_comments')
+    comments = serializers.SerializerMethodField('_get_comments')
 
     def _get_comments(self, car):
-        pass
+        comments = Comment.objects.filter(car__name=car).values()
+        # comments = Comment.objects.filter(car__name=car).count()
+        return comments
 
     def create(self, validated_data):
         name = validated_data.pop('name')
@@ -122,3 +125,30 @@ class CarSerializator(serializers.ModelSerializer):
     
     def update(self, instance, validated_data):
         pass
+
+
+class CommentSerializator(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('id', 'email', 'car', 'comment_text', 'create_date')
+
+    car = CarDefaultSerializer()
+
+    def create(self, validated_data):
+        email = validated_data.pop('email')
+        car_name = email = validated_data.pop('car').pop('name')
+        comment_text = validated_data.pop('comment_text')
+
+        try:
+            car = Car.objects.get(name=car_name)
+        except Exception:
+            raise serializers.ValidationError({'error': 'car`s name does not exist'})
+        
+        comment = Comment.objects.create(
+            email=email,
+            car=car,
+            comment_text=comment_text
+        )
+
+        return comment
+
