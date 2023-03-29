@@ -21,13 +21,13 @@ class CountryViewset(viewsets.ModelViewSet):
         
     #     return query
     
-    def get_queryset_put(self):
-        query = Country.objects.get(name=self.request.data.get('update_name', False))
+    # def get_queryset_put(self):
+    #     query = Country.objects.get(name=self.request.data.get('update_name', False))
 
-        if query:
-            return query
+    #     if query:
+    #         return query
         
-        return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+    #     return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
     
     # def destroy(self, request, *args, **kwargs):
     #     country = self.get_queryset_destroy()
@@ -40,16 +40,16 @@ class CountryViewset(viewsets.ModelViewSet):
         
     #     return Response(status=status.HTTP_400_BAD_REQUEST)
     
-    def put(self, request):
-        query = self.get_queryset_put()
-        serializer = CountrySerializator(instance=query, data=request.data)
+    # def put(self, request):
+    #     query = self.get_queryset_put()
+    #     serializer = CountrySerializator(instance=query, data=request.data)
         
-        if serializer.is_valid():
-            serializer.save()
+    #     if serializer.is_valid():
+    #         serializer.save()
 
-            return Response(status=status.HTTP_200_OK)
-        else:    
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+    #         return Response(status=status.HTTP_200_OK)
+    #     else:    
+    #         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProducerViewset(viewsets.ModelViewSet):
@@ -58,17 +58,18 @@ class ProducerViewset(viewsets.ModelViewSet):
     serializer_class = ProducerSerializtor
     lookup_field = 'name'
 
-    def get_queryset_put(self):
-        query = Country.objects.get(name=self.request.data.get('update_name', False))
+    def get_queryset_put(self, name):
+        query = Producer.objects.get(name=name)
 
         if query:
             return query
         
         return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
     
-    def put(self, request):
-        query = self.get_queryset_put()
-        serializer = ProducerSerializtor(query)
+
+    def put(self, request, name):
+        instance = self.get_queryset_put(name)
+        serializer = ProducerSerializtor(instance=instance, data=request.data)
 
         if serializer.is_valid():
             serializer.save()
