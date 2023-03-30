@@ -26,7 +26,7 @@ class CountrySerializator(serializers.ModelSerializer):
 
     def _get_producers(self, country):
         country_name = getattr(country, 'name')
-        producers = Producer.objects.filter(country__name=country_name).values('id', 'name')
+        producers = Producer.objects.filter(country__name=country_name).only('id', 'name').values('id', 'name')
 
         return  producers
 
@@ -92,7 +92,7 @@ class CarDefaultSerializer(serializers.ModelSerializer):
 class CarSerializator(serializers.ModelSerializer):
     class Meta:
         model = Car
-        fields = ('name', 'producer', 'year_start', 'year_end')
+        # fields = ('name', 'producer', 'year_start', 'year_end')
         fields = ('name', 'producer', 'year_start', 'year_end', 'comments',)
 
     producer = CarDefaultSerializer()
@@ -110,7 +110,7 @@ class CarSerializator(serializers.ModelSerializer):
         year_end = validated_data.pop('year_end')
         
         try:
-            producer = Producer.objects.get(name=validated_data.pop('producer').pop('name'))
+            producer = Car.objects.get(producer__name=validated_data.pop('producer').pop('name'))
         except Exception:
             raise serializers.ValidationError({'error': 'producer`s name does not exist'})
 
@@ -124,8 +124,23 @@ class CarSerializator(serializers.ModelSerializer):
         return car
     
     def update(self, instance, validated_data):
-        pass
+        
+        try:
+            producer = Car.objects.get(producer__name=validated_data.pop('producer').pop('name'))
+        except Exception:
+            raise serializers.ValidationError({'error': 'produceres`s name does not exist'})
+        
+        name = validated_data.pop('name')
+        year_start = validated_data.pop('year_start')
+        year_end = validated_data.pop('year_end')
 
+        instance.name = name
+        instance.producer = producer
+        instance.year_start = year_start
+        instance.year_end = year_end
+        instance.save()
+
+        return instance
 
 class CommentSerializator(serializers.ModelSerializer):
     class Meta:
@@ -136,7 +151,7 @@ class CommentSerializator(serializers.ModelSerializer):
 
     def create(self, validated_data):
         email = validated_data.pop('email')
-        car_name = email = validated_data.pop('car').pop('name')
+        car_name = validated_data.pop('car').pop('name')
         comment_text = validated_data.pop('comment_text')
 
         try:
@@ -151,4 +166,3 @@ class CommentSerializator(serializers.ModelSerializer):
         )
 
         return comment
-

@@ -75,11 +75,10 @@ class ProducerViewset(viewsets.ModelViewSet):
             return query
         
         return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
-    
 
     def put(self, request, name):
         instance = self.get_queryset_put(name)
-        serializer = ProducerSerializtor(instance=instance, data=request.data)
+        serializer = ProducerSerializtor(instance=instance, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -94,6 +93,21 @@ class CarViewset(viewsets.ModelViewSet):
     queryset = Car.objects.all()
     lookup_field = 'name'
     raise_exception = True
+
+    def put(self, request, name):
+        try:
+            instance = Car.objects.get(name)
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = CarSerializator(instance=instance, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class CommentViewset(viewsets.ModelViewSet):

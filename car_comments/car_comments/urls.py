@@ -9,5 +9,6 @@ urlpatterns = [
     path('api/', include(router_producer.urls)),
     path('api/', include(router_car.urls)),
     path('api/', include(router_comment.urls)),
+    path('silk/', include('silk.urls', namespace='silk')),
     # path('api/', include('comments.urls')),
 ]
