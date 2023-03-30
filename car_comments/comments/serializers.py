@@ -46,7 +46,8 @@ class ProducerSerializtor(serializers.ModelSerializer):
         fields = ('name', 'country', 'cars',)
 
     name = serializers.CharField(max_length=255, required=True)
-    country = CountryProducerSerializator()
+    # country = CountryProducerSerializator()
+    country = serializers.CharField(max_length=255, source='country.name')
     cars = serializers.SerializerMethodField('_get_cars')
 
     def _get_cars(self, producer):
