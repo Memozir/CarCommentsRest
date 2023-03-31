@@ -56,6 +56,10 @@ class ProducerSerializtor(serializers.ModelSerializer):
 
         return comments_count
 
+    # country = CountryProducerSerializator()
+    country = serializers.CharField(max_length=255, source='country.name')
+    cars = serializers.SerializerMethodField('_get_cars')
+
     def _get_cars(self, producer):
         cars = Car.objects.filter(producer__name=producer).values()
 
