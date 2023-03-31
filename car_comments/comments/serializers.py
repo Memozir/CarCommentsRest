@@ -43,11 +43,18 @@ class ProducerSerializtor(serializers.ModelSerializer):
 
     class Meta:
         model = Producer
-        fields = ('name', 'country', 'cars',)
+        fields = ('name', 'country', 'cars', 'comments')
 
     name = serializers.CharField(max_length=255, required=True)
     country = CountryProducerSerializator()
-    cars = serializers.SerializerMethodField('_get_cars')
+    cars = serializers.SerializerMethodField('_get_cars', read_only=True)
+    comments = serializers.SerializerMethodField('_get_comments_count', read_only=True)
+
+    def _get_comments_count(self, producer):
+        cars = Car.objects.filter(producer=producer)
+        comments_count = Comment.objects.filter(car__in=cars).count()
+
+        return comments_count
 
     def _get_cars(self, producer):
         cars = Car.objects.filter(producer__name=producer).values()
@@ -93,15 +100,21 @@ class CarSerializator(serializers.ModelSerializer):
     class Meta:
         model = Car
         # fields = ('name', 'producer', 'year_start', 'year_end')
-        fields = ('name', 'producer', 'year_start', 'year_end', 'comments',)
+        fields = ('name', 'producer', 'year_start', 'year_end', 'comments', 'comments_count')
 
     producer = CarDefaultSerializer()
     name = serializers.CharField(max_length=128)
-    comments = serializers.SerializerMethodField('_get_comments')
+    comments = serializers.SerializerMethodField('_get_comments', read_only=True)
+    comments_count = serializers.SerializerMethodField('_get_comments_count', read_only=True)
+
+    def _get_comments_count(self, car):
+        comments_count = Comment.objects.filter(car__name=car).count()
+
+        return comments_count
 
     def _get_comments(self, car):
         comments = Comment.objects.filter(car__name=car).values()
-        # comments = Comment.objects.filter(car__name=car).count()
+
         return comments
 
     def create(self, validated_data):

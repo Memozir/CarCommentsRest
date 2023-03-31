@@ -64,7 +64,7 @@ class CountryViewset(viewsets.ModelViewSet):
 
 class ProducerViewset(viewsets.ModelViewSet):
 
-    queryset = Producer.objects.all()
+    queryset = Producer.objects.all().select_related('country')
     serializer_class = ProducerSerializtor
     lookup_field = 'name'
 
@@ -90,7 +90,7 @@ class ProducerViewset(viewsets.ModelViewSet):
 
 class CarViewset(viewsets.ModelViewSet):
     serializer_class = CarSerializator
-    queryset = Car.objects.all()
+    queryset = Car.objects.all().select_related('producer')
     lookup_field = 'name'
     raise_exception = True
 
