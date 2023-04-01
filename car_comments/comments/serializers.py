@@ -43,7 +43,7 @@ class ProducerSerializtor(serializers.ModelSerializer):
 
     class Meta:
         model = Producer
-        fields = ('name', 'country', 'cars', 'comments')
+        fields = ('name', 'country', 'cars', 'comments_count')
 
     name = serializers.CharField(max_length=255, required=True)
     country = CountryProducerSerializator()
@@ -59,7 +59,13 @@ class ProducerSerializtor(serializers.ModelSerializer):
     # country = CountryProducerSerializator()
     country = serializers.CharField(max_length=255, source='country.name')
     cars = serializers.SerializerMethodField('_get_cars')
+    comments_count = serializers.SerializerMethodField('_get_comments_count')
 
+    def _get_comments_count(self, producer):
+        comments_count = Comment.objects.filter(car__name='producer.car.name').count()
+
+        return comments_count
+    
     def _get_cars(self, producer):
         cars = Car.objects.filter(producer__name=producer).values()
 
@@ -165,6 +171,9 @@ class CommentSerializator(serializers.ModelSerializer):
         fields = ('id', 'email', 'car', 'comment_text', 'create_date')
 
     car = CarDefaultSerializer()
+    email = serializers.EmailField()
+    comment_text = serializers.CharField(max_length=1024)
+    create_date = serializers.DateField(read_only=True)
 
     def create(self, validated_data):
         email = validated_data.pop('email')

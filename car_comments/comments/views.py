@@ -3,8 +3,9 @@ from rest_framework.views import APIView
 from rest_framework.generics import DestroyAPIView, UpdateAPIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from rest_framework import status
-from rest_framework import viewsets
+from rest_framework import status, viewsets
+from drf_excel.renderers import XLSXRenderer
+from drf_excel.mixins import XLSXFileMixin
 
 from .models import (
     Country,
@@ -14,6 +15,7 @@ from .models import (
 )
 from .serializers import (
     CountrySerializator,
+    CountryProducerSerializator,
     ProducerSerializtor,
     CarSerializator,
     CommentSerializator
@@ -114,6 +116,18 @@ class CommentViewset(viewsets.ModelViewSet):
     serializer_class = CommentSerializator
     queryset = Comment.objects.all()
     raise_exception = True
+
+
+class CountryXLSXViewset(viewsets.ReadOnlyModelViewSet, XLSXFileMixin):
+    
+    queryset = Country.objects.all()
+    serializer_class = CountrySerializator
+    lookup_field = 'name'
+
+    renderer_classes = [XLSXRenderer, ]
+    filename = 'my_export.xlsx'
+
+
 
 # class CountryListAPIView(APIView):
 
