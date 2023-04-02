@@ -4,8 +4,7 @@ from rest_framework.generics import DestroyAPIView, UpdateAPIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework import status, viewsets
-from drf_excel.renderers import XLSXRenderer
-from drf_excel.mixins import XLSXFileMixin
+from rest_framework.renderers import JSONRenderer
 
 from .models import (
     Country,
@@ -15,18 +14,20 @@ from .models import (
 )
 from .serializers import (
     CountrySerializator,
-    CountryProducerSerializator,
     ProducerSerializtor,
     CarSerializator,
-    CommentSerializator
+    CommentSerializator,
 )
+from .permissions import CommentPermission
 
 
 class CountryViewset(viewsets.ModelViewSet):
-
     queryset = Country.objects.all()
     serializer_class = CountrySerializator
     lookup_field = 'name'
+
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    authentication_classes = (TokenAuthentication,)
 
     # def get_queryset_destroy(self):
     #     query = Country.objects.get(name=self.request.data.get('name'))
@@ -65,10 +66,12 @@ class CountryViewset(viewsets.ModelViewSet):
 
 
 class ProducerViewset(viewsets.ModelViewSet):
-
     queryset = Producer.objects.all().select_related('country')
     serializer_class = ProducerSerializtor
     lookup_field = 'name'
+
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    authentication_classes = (TokenAuthentication,)
 
     def get_queryset_put(self, name):
         query = Producer.objects.get(name=name)
@@ -96,6 +99,9 @@ class CarViewset(viewsets.ModelViewSet):
     lookup_field = 'name'
     raise_exception = True
 
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    authentication_classes = (TokenAuthentication,)
+
     def put(self, request, name):
         try:
             instance = Car.objects.get(name)
@@ -117,17 +123,8 @@ class CommentViewset(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     raise_exception = True
 
-
-class CountryXLSXViewset(viewsets.ReadOnlyModelViewSet, XLSXFileMixin):
-    
-    queryset = Country.objects.all()
-    serializer_class = CountrySerializator
-    lookup_field = 'name'
-
-    renderer_classes = [XLSXRenderer, ]
-    filename = 'my_export.xlsx'
-
-
+    permission_classes = (CommentPermission,)
+    authentication_classes = (TokenAuthentication,)
 
 # class CountryListAPIView(APIView):
 

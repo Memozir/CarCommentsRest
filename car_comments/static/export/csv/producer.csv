@@ -1,0 +1,2 @@
+,name,country,cars,comments_count
+0,Ferrari,"OrderedDict([('name', 'Italy')])","<QuerySet [{'id': 1, 'name': 'Ferrari 112', 'producer_id': 'Ferrari', 'year_start': 1987, 'year_end': 1999}]>",1

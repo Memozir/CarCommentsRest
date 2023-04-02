@@ -48,7 +48,7 @@ class ProducerSerializtor(serializers.ModelSerializer):
     name = serializers.CharField(max_length=255, required=True)
     country = CountryProducerSerializator()
     cars = serializers.SerializerMethodField('_get_cars', read_only=True)
-    comments = serializers.SerializerMethodField('_get_comments_count', read_only=True)
+    comments_count = serializers.SerializerMethodField('_get_comments_count', read_only=True)
 
     def _get_comments_count(self, producer):
         cars = Car.objects.filter(producer=producer)
@@ -57,12 +57,12 @@ class ProducerSerializtor(serializers.ModelSerializer):
         return comments_count
 
     # country = CountryProducerSerializator()
-    country = serializers.CharField(max_length=255, source='country.name')
-    cars = serializers.SerializerMethodField('_get_cars')
-    comments_count = serializers.SerializerMethodField('_get_comments_count')
+    # country = serializers.CharField(max_length=255, source='country.name')
+    # cars = serializers.SerializerMethodField('_get_cars')
+    # comments_count = serializers.SerializerMethodField('_get_comments_count')
 
-    def _get_comments_count(self, producer):
-        comments_count = Comment.objects.filter(car__name='producer.car.name').count()
+    # def _get_comments_count(self, producer):
+    #     comments_count = Comment.objects.filter(car__name='producer.car.name').count()
 
         return comments_count
     
@@ -90,7 +90,6 @@ class ProducerSerializtor(serializers.ModelSerializer):
         except Exception:
             raise serializers.ValidationError({'error': 'country`s name does not exist'})        
 
-        country = Country.objects.get(name=validated_data.pop('country').pop('name'))
         instance.name = validated_data.pop('name', False)
         instance.country = country
         instance.save()
@@ -133,7 +132,7 @@ class CarSerializator(serializers.ModelSerializer):
         year_end = validated_data.pop('year_end')
         
         try:
-            producer = Car.objects.get(producer__name=validated_data.pop('producer').pop('name'))
+            producer = Producer.objects.get(name=validated_data.pop('producer').pop('name'))
         except Exception:
             raise serializers.ValidationError({'error': 'producer`s name does not exist'})
 

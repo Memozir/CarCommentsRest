@@ -1,0 +1,6 @@
+,name,producers
+0,Russia,<QuerySet []>
+1,Poland,<QuerySet []>
+2,France,<QuerySet []>
+3,Japan,<QuerySet []>
+4,Italy,"<QuerySet [{'id': 1, 'name': 'Ferrari'}]>"

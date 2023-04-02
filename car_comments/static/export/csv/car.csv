@@ -1,0 +1,2 @@
+,name,producer,year_start,year_end,comments,comments_count
+0,Ferrari 112,"OrderedDict([('name', 'Ferrari')])",1987,1999,"<QuerySet [{'id': 1, 'email': 'ferrari_lover223@gmail.com', 'car_id': 'Ferrari 112', 'comment_text': 'I`m so obsessed with this car!', 'create_date': datetime.date(2023, 4, 2)}]>",1
