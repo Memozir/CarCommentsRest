@@ -10,6 +10,67 @@ from .models import (
 )
 
 
+class CountryDefaultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Country
+        fields = ('name',)
+
+    name = serializers.CharField(max_length=255, read_only=True)
+
+
+class CountryNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Country
+        fields = ('name',)
+
+    name = serializers.CharField(max_length=255)
+
+
+class ProducerDefaultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Producer
+        fields = ('name', 'country')
+
+    name = serializers.CharField(max_length=255, read_only=True)
+    country = serializers.SlugRelatedField(slug_field='country_name', read_only=True)
+
+
+class ProducerNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Producer
+        fields = ('name',)
+
+    name = serializers.CharField(max_length=255, read_only=True)
+
+
+class CarDefaultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Car
+        fields = ('name', 'producer', 'year_start', 'year_end')
+
+    producer = serializers.SlugRelatedField(slug_field='producer_name', read_only=True)
+    name = serializers.CharField(max_length=255, read_only=True)
+
+
+class CarNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Car
+        fields = ('name',)
+
+    name = serializers.CharField(max_length=255)
+
+
+class CommentDefaultSerializer(serializers.ModelField):
+    class Meta:
+        model = Comment
+        fields = ('email', 'car', 'comment_text', 'create_date')
+
+    car = serializers.SlugRelatedField(slug_field='car_name', read_only=True)
+    email = serializers.EmailField(read_only=True)
+    comment_text = serializers.CharField(max_length=1024, read_only=True)
+    create_date = serializers.DateField(read_only=True)
+
+
 class CountrySerializator(serializers.ModelSerializer):
 
     name = serializers.CharField(max_length=255, required=True)
@@ -31,14 +92,6 @@ class CountrySerializator(serializers.ModelSerializer):
         return  producers
 
 
-class CountryProducerSerializator(serializers.ModelSerializer):
-    class Meta:
-        model = Country
-        fields = ('name',)
-
-    name = serializers.CharField(max_length=255, required=True)
-
-
 class ProducerSerializtor(serializers.ModelSerializer):
 
     class Meta:
@@ -46,7 +99,7 @@ class ProducerSerializtor(serializers.ModelSerializer):
         fields = ('name', 'country', 'cars', 'comments_count')
 
     name = serializers.CharField(max_length=255, required=True)
-    country = CountryProducerSerializator()
+    country = CountryNameSerializer()
     cars = serializers.SerializerMethodField('_get_cars', read_only=True)
     comments_count = serializers.SerializerMethodField('_get_comments_count', read_only=True)
 
@@ -95,14 +148,6 @@ class ProducerSerializtor(serializers.ModelSerializer):
         instance.save()
 
         return instance
-    
-
-class CarDefaultSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Producer
-        fields = ('name',)
-
-    name = serializers.CharField(max_length=255, required=True)
 
 
 class CarSerializator(serializers.ModelSerializer):
@@ -111,7 +156,7 @@ class CarSerializator(serializers.ModelSerializer):
         # fields = ('name', 'producer', 'year_start', 'year_end')
         fields = ('name', 'producer', 'year_start', 'year_end', 'comments', 'comments_count')
 
-    producer = CarDefaultSerializer()
+    producer = ProducerNameSerializer()
     name = serializers.CharField(max_length=128)
     comments = serializers.SerializerMethodField('_get_comments', read_only=True)
     comments_count = serializers.SerializerMethodField('_get_comments_count', read_only=True)
@@ -164,12 +209,13 @@ class CarSerializator(serializers.ModelSerializer):
 
         return instance
 
+
 class CommentSerializator(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('id', 'email', 'car', 'comment_text', 'create_date')
 
-    car = CarDefaultSerializer()
+    car = CarNameSerializer()
     email = serializers.EmailField()
     comment_text = serializers.CharField(max_length=1024)
     create_date = serializers.DateField(read_only=True)

@@ -3,16 +3,17 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from . import models
-from .serializers import (CountrySerializator,
-                          ProducerSerializtor,
-                          CarSerializator,
-                          CommentSerializator
+from .serializers import (CountryDefaultSerializer,
+                          CountrySerializator,
+                          ProducerDefaultSerializer,
+                          CarDefaultSerializer,
+                          CommentDefaultSerializer
                           )
 
 from pandas import DataFrame
 
 
-class CountryExportiew(APIView):
+class CountryExportView(APIView):
 
     def get(self, request):
         export = request.GET.get('export', False)
@@ -35,14 +36,14 @@ class CountryExportiew(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class ProducerExportiew(APIView):
+class ProducerExportView(APIView):
 
     def get(self, request):
         export = request.GET.get('export', False)
 
         if export:
             query = models.Producer.objects.all().select_related('country')
-            serializer = ProducerSerializtor(query, many=True)
+            serializer = ProducerDefaultSerializer(query, many=True)
 
             df = DataFrame(serializer.data)
 
@@ -58,14 +59,14 @@ class ProducerExportiew(APIView):
         return Response(status=status.HTTP_200_OK)
     
 
-class CarExportiew(APIView):
+class CarExportView(APIView):
 
     def get(self, request):
         export = request.GET.get('export', False)
 
         if export:
             query = models.Car.objects.all().select_related('producer')
-            serializer = CarSerializator(query, many=True)
+            serializer = CarDefaultSerializer(query, many=True)
 
             df = DataFrame(serializer.data)
 
@@ -81,14 +82,14 @@ class CarExportiew(APIView):
         return Response(status=status.HTTP_200_OK)
     
 
-class CommentExportiew(APIView):
+class CommentExportView(APIView):
 
     def get(self, request):
         export = request.GET.get('export', False)
 
         if export:
             query = models.Comment.objects.all().select_related('car')
-            serializer = CommentSerializator(query, many=True)
+            serializer = CommentDefaultSerializer(query, many=True)
 
             df = DataFrame(serializer.data)
 

@@ -120,11 +120,11 @@ class CarViewset(viewsets.ModelViewSet):
 
 class CommentViewset(viewsets.ModelViewSet):
     serializer_class = CommentSerializator
-    queryset = Comment.objects.all()
+    queryset = Comment.objects.all().select_related('car')
     raise_exception = True
 
-    permission_classes = (CommentPermission,)
-    authentication_classes = (TokenAuthentication,)
+    # permission_classes = (CommentPermission,)
+    # authentication_classes = (TokenAuthentication,)
 
 # class CountryListAPIView(APIView):
 

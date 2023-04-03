@@ -19,10 +19,10 @@ router_comment.register(r'comment', viewset=views.CommentViewset)
 
 
 urlpatterns = [
-    path('country/export/', name='country_export', view=export_views.CountryExportiew.as_view()),
-    path('producer/export/', name='producer_export', view=export_views.ProducerExportiew.as_view()),
-    path('car/export/', name='car_export', view=export_views.CarExportiew.as_view()),
-    path('comment/export/', name='comment_export', view=export_views.CommentExportiew.as_view()),
+    path('country/export/', name='country_export', view=export_views.CountryExportView.as_view()),
+    path('producer/export/', name='producer_export', view=export_views.ProducerExportView.as_view()),
+    path('car/export/', name='car_export', view=export_views.CarExportView.as_view()),
+    path('comment/export/', name='comment_export', view=export_views.CommentExportView.as_view()),
 
 ]
 
