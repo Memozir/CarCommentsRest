@@ -1,2 +1,3 @@
 ,name,producer,year_start,year_end
-0,Ferrari 112,comments.Car.None,1987,1999
+0,Lada Granta,comments.Car.None,2005,2015
+1,Renault Duster,comments.Car.None,2005,2016

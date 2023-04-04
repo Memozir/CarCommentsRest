@@ -1,6 +1,7 @@
 ,name,producers
-0,Russia,<QuerySet []>
-1,Poland,<QuerySet []>
-2,France,<QuerySet []>
-3,Japan,<QuerySet []>
-4,Italy,"<QuerySet [{'id': 1, 'name': 'Ferrari'}]>"
+0,Italy,<QuerySet []>
+1,Russia,"<QuerySet [{'id': 6, 'name': 'Lada'}]>"
+2,Japan,<QuerySet []>
+3,France,"<QuerySet [{'id': 5, 'name': 'Renault'}]>"
+4,Germany,<QuerySet []>
+5,Lada Vesta,<QuerySet []>

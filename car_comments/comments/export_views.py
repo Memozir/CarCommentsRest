@@ -1,19 +1,24 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 
 from . import models
-from .serializers import (CountryDefaultSerializer,
-                          CountrySerializator,
+from .serializers import (
+                        CountrySerializator,
                           ProducerDefaultSerializer,
                           CarDefaultSerializer,
-                          CommentDefaultSerializer
+                          CommentSerializator
                           )
 
 from pandas import DataFrame
 
 
 class CountryExportView(APIView):
+
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
 
     def get(self, request):
         export = request.GET.get('export', False)
@@ -38,6 +43,9 @@ class CountryExportView(APIView):
 
 class ProducerExportView(APIView):
 
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
     def get(self, request):
         export = request.GET.get('export', False)
 
@@ -60,6 +68,9 @@ class ProducerExportView(APIView):
     
 
 class CarExportView(APIView):
+
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
 
     def get(self, request):
         export = request.GET.get('export', False)
@@ -84,12 +95,15 @@ class CarExportView(APIView):
 
 class CommentExportView(APIView):
 
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
     def get(self, request):
         export = request.GET.get('export', False)
 
         if export:
             query = models.Comment.objects.all().select_related('car')
-            serializer = CommentDefaultSerializer(query, many=True)
+            serializer = CommentSerializator(query, many=True)
 
             df = DataFrame(serializer.data)
 

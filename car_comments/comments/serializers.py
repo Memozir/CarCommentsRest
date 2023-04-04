@@ -1,6 +1,4 @@
 from rest_framework import serializers
-from rest_framework.response import Response
-from rest_framework import status
 
 from .models import (
     Country,
@@ -40,7 +38,7 @@ class ProducerNameSerializer(serializers.ModelSerializer):
         model = Producer
         fields = ('name',)
 
-    name = serializers.CharField(max_length=255, read_only=True)
+    name = serializers.CharField(max_length=255)
 
 
 class CarDefaultSerializer(serializers.ModelSerializer):
@@ -80,11 +78,6 @@ class CountrySerializator(serializers.ModelSerializer):
         model = Country
         fields = ['name', 'producers']
 
-
-    # def _is_producer(self) -> bool:
-    #     if self.context.get('producer', False):
-    #         self.Meta.fields.remove('producers')
-
     def _get_producers(self, country):
         country_name = getattr(country, 'name')
         producers = Producer.objects.filter(country__name=country_name).only('id', 'name').values('id', 'name')
@@ -106,16 +99,6 @@ class ProducerSerializtor(serializers.ModelSerializer):
     def _get_comments_count(self, producer):
         cars = Car.objects.filter(producer=producer)
         comments_count = Comment.objects.filter(car__in=cars).count()
-
-        return comments_count
-
-    # country = CountryProducerSerializator()
-    # country = serializers.CharField(max_length=255, source='country.name')
-    # cars = serializers.SerializerMethodField('_get_cars')
-    # comments_count = serializers.SerializerMethodField('_get_comments_count')
-
-    # def _get_comments_count(self, producer):
-    #     comments_count = Comment.objects.filter(car__name='producer.car.name').count()
 
         return comments_count
     
@@ -193,7 +176,7 @@ class CarSerializator(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         
         try:
-            producer = Car.objects.get(producer__name=validated_data.pop('producer').pop('name'))
+            producer = Producer.objects.get(name=validated_data.pop('producer').pop('name'))
         except Exception:
             raise serializers.ValidationError({'error': 'produceres`s name does not exist'})
         
@@ -237,3 +220,20 @@ class CommentSerializator(serializers.ModelSerializer):
         )
 
         return comment
+
+    def update(self, instance, validated_data):
+        
+        try:
+            car = Car.objects.get(name=validated_data.pop('car').pop('name'))
+        except Exception:
+            raise serializers.ValidationError({'error': 'car`s name does not exist'})
+        
+        email = validated_data.pop('email')
+        comment_text = validated_data.pop('comment_text')
+
+        instance.email = email
+        instance.car = car
+        instance.comment_text = comment_text
+        instance.save()
+
+        return instance
